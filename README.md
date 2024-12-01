@@ -91,7 +91,3 @@ node index.js
 ### 3. Menghubungkan Flask dan Express
 
 Pastikan Flask berjalan di http://127.0.0.1:5000 dan Express.js di http://127.0.0.1:3000. Express.js akan meneruskan request ke Flask melalui endpoint `/predict`.
-```
-
-### Cara Menggunakan
-Anda dapat menyalin teks di atas ke file `README.md` di direktori proyek Anda. File ini memberikan panduan yang jelas untuk pengguna tentang struktur proyek, penjelasan struktur folder, dan langkah-langkah dalam menyiapkan dan menjalankan proyek. Jika ada lagi yang ingin ditambahkan atau dimodifikasi, silakan beri tahu!
