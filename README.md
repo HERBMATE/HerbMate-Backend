@@ -4,7 +4,7 @@ Berikut adalah teks Anda yang telah diformat ke dalam bentuk file `README.md`:
 # Struktur Proyek
 
 project-root/
-```
+
 ├── flask-backend/
 │   ├── model.h5                     # File model Machine Learning
 │   ├── model_api.py                 # API Flask untuk menjalankan model
@@ -15,7 +15,7 @@ project-root/
 │   ├── package-lock.json            # File lock untuk npm
 │   └── node_modules/                # Folder dependensi Node.js
 └── README.md                        # Dokumentasi proyek
-
+```
 ## Penjelasan Struktur
 
 1. **flask-backend/**
