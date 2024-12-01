@@ -1,5 +1,3 @@
-Berikut adalah teks Anda yang telah diformat ke dalam bentuk file `README.md`:
-
 ```markdown
 # Struktur Proyek
 
