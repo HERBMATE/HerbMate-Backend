@@ -1,10 +1,10 @@
-Berikut adalah teks Anda yang telah diformat ke dalam bentuk file `README.md`:
+
 
 ```markdown
 # Struktur Proyek
 
 project-root/
-
+```
 ├── flask-backend/
 │   ├── model.h5                     # File model Machine Learning
 │   ├── model_api.py                 # API Flask untuk menjalankan model
@@ -15,6 +15,7 @@ project-root/
 │   ├── package-lock.json            # File lock untuk npm
 │   └── node_modules/                # Folder dependensi Node.js
 └── README.md                        # Dokumentasi proyek
+```
 
 ## Penjelasan Struktur
 
@@ -111,6 +112,3 @@ node index.js
 
 Pastikan Flask berjalan di http://127.0.0.1:5000 dan Express.js di http://127.0.0.1:3000. Express.js akan meneruskan request ke Flask melalui endpoint `/predict`.
 ```
-
-### Cara Menggunakan
-Anda dapat menyalin teks di atas ke file `README.md` di direktori proyek Anda. File ini memberikan panduan yang jelas untuk pengguna tentang struktur proyek, penjelasan struktur folder, dan langkah-langkah dalam menyiapkan dan menjalankan proyek. Jika ada lagi yang ingin ditambahkan atau dimodifikasi, silakan beri tahu!
