@@ -4,7 +4,7 @@
 # Struktur Proyek
 
 project-root/
-```
+
 ├── flask-backend/
 │   ├── model.h5                     # File model Machine Learning
 │   ├── model_api.py                 # API Flask untuk menjalankan model
