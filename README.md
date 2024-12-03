@@ -10,7 +10,7 @@ Selamat datang di API Herbmate! API ini memungkinkan Anda untuk mengambil data d
    - **Tabel `pertanyaan`**: Menyimpan data pertanyaan dengan kolom `teks_pertanyaan`, `penyakit`, `nama_tanaman`, dan `kategori`.
    - **Tabel `info_tambahan`**: Menyimpan informasi tambahan seperti resep dengan kolom `nama_tanaman`, `penyakit`, dan `resep`.
 
----
+```
 
 ## Endpoint
 
