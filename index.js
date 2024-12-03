@@ -29,48 +29,23 @@ app.get('/', (req, res) => {
 
 
 
-// Contoh endpoint: Fetch semua data dari tabel 'tanaman'
-app.get('/tanaman', (req, res) => {
-    const sql = 'SELECT * FROM tanaman';
+//titik baru ---------------------------------------------------------
+
+// PERKATEGORI -------------------------------------------------
+// Kategori 1: Pertanyaan pembuka
+app.get('/api/pertanyaan/kategori/1', (req, res) => {
+    res.json({
+        message: "Selamat datang! Silakan pilih kategori pertanyaan berikut: kategori 2 untuk memulai."
+    });
+});
+
+// Kategori 2: Pertanyaan pemisah
+app.get('/api/pertanyaan/kategori/2', (req, res) => {
+    const sql = `
+        SELECT DISTINCT p.penyakit AS nama_penyakit, p.nama_tanaman AS nama_tanaman
+        FROM pertanyaan p;
+    `;
     db.query(sql, (err, results) => {
-      if (err) {
-        console.error(err);
-        res.status(500).send('Terjadi kesalahan pada server.');
-      } else {
-        res.json(results);
-      }
-    });
-  });
-
-  app.get('/tanaman/:nama', (req, res) => {
-    // Ambil parameter nama dari URL
-    const namaTanaman = req.params.nama;
-
-    // SQL query untuk fetch data berdasarkan nama tanaman
-    const sql = `
-        SELECT 
-            t.nama AS nama_tanaman,
-            t.nama_latin,
-            t.asal,
-            t.kandungan,
-            t.gambar,
-            i.resep,
-            i.penyakit,
-            i.efek_samping,
-            i.manfaat,
-            i.sumber
-        FROM 
-            tanaman t
-        JOIN 
-            info_tambahan i
-        ON 
-            t.nama = i.nama_tanaman
-        WHERE 
-            t.nama = ?;
-    `;
-
-    // Eksekusi query dengan parameter
-    db.query(sql, [namaTanaman], (err, result) => {
         if (err) {
             console.error('Error executing query:', err);
             return res.status(500).json({
@@ -79,47 +54,33 @@ app.get('/tanaman', (req, res) => {
             });
         }
 
-        if (result.length === 0) {
-            return res.status(404).json({
-                message: `No data found for tanaman with name '${namaTanaman}'`
-            });
-        }
+        const penyakit = [...new Set(results.map(row => row.nama_penyakit))];
+        const tanaman = [...new Set(results.map(row => row.nama_tanaman.split(',')).flat())];
 
-        // Jika data ditemukan, kirimkan hasilnya
-        res.status(200).json(result);
+        res.json({
+            message: "Silakan pilih kategori selanjutnya berdasarkan daftar berikut:",
+            kategori_3a: "Saya ingin menanyakan terkait tanaman tertentu.",
+            kategori_3b: "Saya ingin menanyakan terkait penyakit tertentu.",
+            list_penyakit: penyakit,
+            list_tanaman: tanaman
+        });
     });
 });
 
-//ENDPOINT get data by penyakit
-app.get('/penyakit/:penyakit', (req, res) => {
-    // Ambil parameter nama penyakit dari URL
-    const namaPenyakit = req.params.penyakit;
+// Kategori 3a: Pertanyaan berdasarkan tanaman tertentu
+app.get('/api/pertanyaan/kategori/3a', (req, res) => {
+    const { nama_tanaman } = req.query;
 
-    // SQL query untuk fetch data berdasarkan nama penyakit
+    if (!nama_tanaman) {
+        return res.status(400).json({ message: "Parameter 'nama_tanaman' diperlukan." });
+    }
+
     const sql = `
-        SELECT 
-            t.nama AS nama_tanaman,
-            t.nama_latin,
-            t.asal,
-            t.kandungan,
-            t.gambar,
-            i.resep,
-            i.penyakit,
-            i.efek_samping,
-            i.manfaat,
-            i.sumber
-        FROM 
-            tanaman t
-        JOIN 
-            info_tambahan i
-        ON 
-            t.nama = i.nama_tanaman
-        WHERE 
-            i.penyakit = ?;
+        SELECT teks_pertanyaan
+        FROM pertanyaan
+        WHERE nama_tanaman LIKE ?;
     `;
-
-    // Eksekusi query dengan parameter
-    db.query(sql, [namaPenyakit], (err, result) => {
+    db.query(sql, [`%${nama_tanaman}%`], (err, results) => {
         if (err) {
             console.error('Error executing query:', err);
             return res.status(500).json({
@@ -128,49 +89,162 @@ app.get('/penyakit/:penyakit', (req, res) => {
             });
         }
 
-        if (result.length === 0) {
-            return res.status(404).json({
-                message: `No data found for penyakit with name '${namaPenyakit}'`
-            });
+        if (results.length === 0) {
+            return res.status(404).json({ message: `Pertanyaan untuk tanaman '${nama_tanaman}' tidak ditemukan.` });
         }
 
-        // Jika data ditemukan, kirimkan hasilnya
-        res.status(200).json(result);
+        res.json({
+            message: `Berikut adalah pertanyaan terkait tanaman '${nama_tanaman}':`,
+            pertanyaan: results.map(row => row.teks_pertanyaan),
+            next_kategori: "Kategori 4a untuk detail lebih lanjut."
+        });
     });
 });
 
+// Kategori 3b: Pertanyaan berdasarkan penyakit tertentu dan kategori  
+app.get('/api/pertanyaan/kategori/3b', (req, res) => {  
+    const { nama_penyakit, kategori } = req.query;  
 
+    // Validasi input  
+    if (!nama_penyakit || !kategori) {  
+        return res.status(400).json({ message: "Parameter 'nama_penyakit' dan 'kategori' diperlukan." });  
+    }  
 
+    const sql = `  
+        SELECT DISTINCT teks_pertanyaan, nama_tanaman  
+        FROM pertanyaan  
+        WHERE penyakit LIKE ? AND kategori = ?;  
+    `;  
+    
+    // Menjalankan query dengan parameter  
+    db.query(sql, [`%${nama_penyakit}%`, kategori], (err, results) => {  
+        // Menangani kesalahan pada saat query  
+        if (err) {  
+            console.error('Error executing query:', err);  
+            return res.status(500).json({  
+                message: 'Error retrieving data',  
+                error: err  
+            });  
+        }  
 
-// Tidak dipakai karena ganti format jangan dihapus dulu
+        // Mengecek jika hasil query kosong  
+        if (results.length === 0) {  
+            return res.status(404).json({ message: `Pertanyaan untuk penyakit '${nama_penyakit}' dan kategori '${kategori}' tidak ditemukan.` });  
+        }  
 
-  //ENDPOINT GET untuk mendapatkan semua detail jawaban
-app.get('/api/questions/', (req, res) => {
-    const parentId = req.query.parent_id || null;
-    const filteredQuestions = questions.filter(q => q.parent_id == parentId);
-    res.json(filteredQuestions); // Mengembalikan seluruh detail pertanyaan dan jawaban
+        // Mengembalikan hasil yang ditemukan  
+        res.json({  
+            message: `Berikut adalah pertanyaan yang berkaitan dengan penyakit '${nama_penyakit}' dan kategori '${kategori}':`,  
+            pertanyaan: results.map(row => ({  
+                teks: row.teks_pertanyaan,  
+                tanaman: row.nama_tanaman  
+            })),  
+            next_kategori: "Kategori 4b untuk mengetahui resep."  
+        });  
+    });  
 });
 
-//ENDPOINT GET by ID untuk mendapatkan detail jawaban
-app.get('/api/answer/:id', (req, res) => {
-    const id = parseInt(req.params.id, 10);
-    const question = questions.find(q => q.id === id);
-    if (question) {
-        res.json({ answer: question.answer }); // Mengembalikan seluruh detail jawaban
-    } else {
-        res.status(404).json({ error: "Question not found" });
+// Kategori 4a: Detail dari tanaman yang dipilih
+app.get('/api/pertanyaan/kategori/4a', (req, res) => {
+    const { nama_tanaman } = req.query;
+
+    if (!nama_tanaman) {
+        return res.status(400).json({ message: "Parameter 'nama_tanaman' diperlukan." });
     }
+
+    const sql = `
+        SELECT *
+        FROM pertanyaan
+        WHERE nama_tanaman LIKE ?;
+    `;
+    db.query(sql, [`%${nama_tanaman}%`], (err, results) => {
+        if (err) {
+            console.error('Error executing query:', err);
+            return res.status(500).json({
+                message: 'Error retrieving data',
+                error: err
+            });
+        }
+
+        if (results.length === 0) {
+            return res.status(404).json({ message: `Detail untuk tanaman '${nama_tanaman}' tidak ditemukan.` });
+        }
+
+        res.json({
+            message: `Berikut adalah detail untuk tanaman '${nama_tanaman}':`,
+            detail: results
+        });
+    });
 });
 
-// Endpoint GET by ID untuk mendapatkan detail pertanyaan
-app.get('/api/questions/:id', (req, res) => {
-    const id = parseInt(req.params.id, 10);
-    const question = questions.find(q => q.id === id);
-    if (question) {
-        res.json(question); // Mengembalikan seluruh detail pertanyaan
-    } else {
-        res.status(404).json({ error: "Question not found" });
-    }
+// Endpoint untuk kategori 4b: Ambil pertanyaan dan resep berdasarkan nama_tanaman, penyakit, dan kategori  
+app.get('/api/pertanyaan/kategori/4b', (req, res) => {  
+    const namaPenyakit = req.query.nama_penyakit;  
+    const namaTanaman = req.query.nama_tanaman;  
+    const kategori = req.query.kategori;  
+
+    // Validasi input  
+    if (!namaPenyakit || !namaTanaman || !kategori) {  
+        return res.status(400).json({  
+            message: "Parameter 'nama_penyakit', 'nama_tanaman', dan 'kategori' harus diberikan."  
+        });  
+    }  
+
+    // Query untuk mengambil pertanyaan  
+    const sqlPertanyaan = `  
+        SELECT   
+            teks_pertanyaan  
+        FROM   
+            pertanyaan  
+        WHERE   
+            nama_tanaman LIKE ? AND penyakit LIKE ? AND kategori = ?;  
+    `;  
+
+    db.query(sqlPertanyaan, [`%${namaTanaman}%`, `%${namaPenyakit}%`, kategori], (err, resultsPertanyaan) => {  
+        if (err) {  
+            console.error('Error executing question query:', err);  
+            return res.status(500).json({  
+                message: 'Error retrieving questions data',  
+                error: err  
+            });  
+        }  
+
+        // Membuat response pertanyaan  
+        const pertanyaanData = resultsPertanyaan.map(row => row.teks_pertanyaan);  
+
+        // Query untuk mengambil resep  
+        const sqlResep = `  
+            SELECT   
+                resep   
+            FROM   
+                info_tambahan   
+            WHERE   
+                nama_tanaman LIKE ? AND penyakit LIKE ?;  
+        `;  
+
+        db.query(sqlResep, [`%${namaTanaman}%`, `%${namaPenyakit}%`], (err, resultsResep) => {  
+            if (err) {  
+                console.error('Error executing recipe query:', err);  
+                return res.status(500).json({  
+                    message: 'Error retrieving recipe data',  
+                    error: err  
+                });  
+            }  
+
+            if (resultsResep.length === 0) {  
+                return res.status(404).json({  
+                    message: `Tidak ditemukan resep untuk penyakit '${namaPenyakit}' dengan tanaman '${namaTanaman}'.`  
+                });  
+            }  
+
+            // Respon jika data ditemukan  
+            res.status(200).json({  
+                message: `Berikut adalah pertanyaan dan resep untuk penyakit '${namaPenyakit}' dengan tanaman '${namaTanaman}':`,  
+                pertanyaan: pertanyaanData,  
+                resep: resultsResep[0].resep // Mengembalikan resep pertama  
+            });  
+        });  
+    });  
 });
 
 const PORT = 3000;
