@@ -6,7 +6,7 @@ API ini menyediakan layanan untuk memprediksi jenis tanaman berdasarkan gambar s
 ---
 
 ## URL Dasar
-```
+
 http://localhost:3000
 ```
 
