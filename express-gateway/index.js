@@ -64,6 +64,51 @@ app.post('/predict', upload.single('file'), async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 });
-  
+
+// Endpoint untuk mendapatkan semua data tanaman (nama dan path gambar)
+app.get('/tanaman', async (req, res) => {
+    try {
+        const connection = await mysql.createConnection(dbConfig);
+
+        const [rows] = await connection.execute(
+            'SELECT nama, gambar FROM tanaman'
+        );
+
+        await connection.end();
+
+        res.json(rows);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// Endpoint untuk mencari data tanaman berdasarkan nama dan sorting by nama
+app.get('/tanaman/search', async (req, res) => {
+    const { nama, order = 'ASC' } = req.query; // Ambil query parameters
+
+    try {
+        const connection = await mysql.createConnection(dbConfig);
+
+        // Query SQL dengan pencarian dan sorting
+        const [rows] = await connection.execute(
+            `SELECT nama, gambar 
+            FROM tanaman 
+            WHERE nama LIKE ? 
+            ORDER BY nama ${order.toUpperCase() === 'DESC' ? 'DESC' : 'ASC'}`,
+            [`%${nama || ''}%`] // Jika nama kosong, akan mengembalikan semua data
+        );
+
+        await connection.end();
+
+        res.json(rows);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
+
+
 
 app.listen(3000, () => console.log(`Server running on http://localhost:3000`));
