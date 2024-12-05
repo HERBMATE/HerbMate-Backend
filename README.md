@@ -1,39 +1,18 @@
-```markdown
-# Dokumentasi API Herbmate
+# Dokumentasi API HerbMate
 
-Selamat datang di API Herbmate! API ini memungkinkan Anda untuk mengambil data dari database MySQL terkait tanaman, penyakit, serta pertanyaan dan resep yang relevan.
+API HerbMate adalah layanan berbasis Node.js yang menggunakan MySQL sebagai database backend. API ini dirancang untuk menyediakan informasi tentang tanaman herbal, penyakit, dan resep terkait berdasarkan kategori pertanyaan tertentu.
 
-## Prasyarat
+## Daftar Endpoint
 
-1. Node.js terinstal di komputer Anda.
-2. Database MySQL dengan struktur berikut:
-   - **Tabel `pertanyaan`**: Menyimpan data pertanyaan dengan kolom `teks_pertanyaan`, `penyakit`, `nama_tanaman`, dan `kategori`.
-   - **Tabel `info_tambahan`**: Menyimpan informasi tambahan seperti resep dengan kolom `nama_tanaman`, `penyakit`, dan `resep`.
-
----
-
-## Endpoint
-
-### 1. Pengecekan Dasar API
-**URL**: `/`  
-**Metode**: `GET`  
-**Deskripsi**: Memastikan API berjalan dan terhubung ke database.
-
-#### Respon
-```json
-{
-  "message": "API Express terhubung ke MySQL!"
-}
+### 1. Kategori 1: Pertanyaan Pembuka
+**Endpoint:**
 ```
+GET /api/pertanyaan/kategori/1
+```
+**Deskripsi:**
+Mengembalikan pesan sambutan untuk memulai eksplorasi API.
 
----
-
-### 2. Kategori 1: Pertanyaan Pembuka
-**URL**: `/api/pertanyaan/kategori/1`  
-**Metode**: `GET`  
-**Deskripsi**: Memberikan pesan selamat datang dan arahan ke kategori berikutnya.
-
-#### Respon
+**Respons:**
 ```json
 {
   "message": "Selamat datang! Silakan pilih kategori pertanyaan berikut: kategori 2 untuk memulai."
@@ -42,149 +21,153 @@ Selamat datang di API Herbmate! API ini memungkinkan Anda untuk mengambil data d
 
 ---
 
-### 3. Kategori 2: Pertanyaan Pemisah
-**URL**: `/api/pertanyaan/kategori/2`  
-**Metode**: `GET`  
-**Deskripsi**: Memberikan daftar penyakit dan tanaman untuk dikategorikan lebih lanjut.
+### 2. Kategori 2: Daftar Tanaman dan Penyakit
+**Endpoint:**
+```
+GET /api/pertanyaan/kategori/2
+```
+**Deskripsi:**
+Mengembalikan daftar tanaman dan penyakit yang tersedia.
 
-#### Respon
+**Respons:**
 ```json
 {
   "message": "Silakan pilih kategori selanjutnya berdasarkan daftar berikut:",
-  "kategori_3a": "Saya ingin menanyakan terkait tanaman tertentu.",
-  "kategori_3b": "Saya ingin menanyakan terkait penyakit tertentu.",
-  "list_penyakit": ["Penyakit 1", "Penyakit 2"],
-  "list_tanaman": ["Tanaman 1", "Tanaman 2"]
+  "kategori_3a": [
+    { "id": 1, "nama": "Tanaman A" },
+    { "id": 2, "nama": "Tanaman B" }
+  ],
+  "kategori_3b": [
+    { "id": 1, "nama": "Penyakit X" },
+    { "id": 2, "nama": "Penyakit Y" }
+  ]
 }
 ```
 
 ---
 
-### 4. Kategori 3a: Pertanyaan Berdasarkan Tanaman
-**URL**: `/api/pertanyaan/kategori/3a`  
-**Metode**: `GET`  
-**Parameter Query**:
-- `nama_tanaman` (wajib): Nama tanaman.
+### 3. Kategori 3a: Pertanyaan Berdasarkan Tanaman
+**Endpoint:**
+```
+GET /api/pertanyaan/kategori/3a
+```
+**Query Parameter:**
+- `nama_tanaman` *(string, required)*: Nama tanaman yang ingin dicari.
 
-#### Respon
-- **Sukses**
+**Deskripsi:**
+Mengembalikan daftar pertanyaan terkait dengan tanaman tertentu.
+
+**Contoh Respons:**
 ```json
 {
-  "message": "Berikut adalah pertanyaan terkait tanaman 'Tanaman':",
-  "pertanyaan": ["Pertanyaan 1", "Pertanyaan 2"],
+  "message": "Berikut adalah data terkait tanaman 'Tanaman A':",
+  "tanaman": [
+    {
+      "id": 1,
+      "pertanyaan": "Apa asal Tanaman A?",
+      "jawaban": "Indonesia"
+    },
+    {
+      "id": 2,
+      "pertanyaan": "Apa nama latin Tanaman A?",
+      "jawaban": "Plantus A"
+    }
+  ],
   "next_kategori": "Kategori 4a untuk detail lebih lanjut."
 }
 ```
-- **Error**: Jika data tanaman tidak ditemukan.
-```json
-{
-  "message": "Pertanyaan untuk tanaman 'Tanaman' tidak ditemukan."
-}
-```
 
 ---
 
-### 5. Kategori 3b: Pertanyaan Berdasarkan Penyakit
-**URL**: `/api/pertanyaan/kategori/3b`  
-**Metode**: `GET`  
-**Parameter Query**:
-- `nama_penyakit` (wajib): Nama penyakit.
-- `kategori` (wajib): Nomor kategori.
+### 4. Kategori 3b: Pertanyaan Berdasarkan Penyakit
+**Endpoint:**
+```
+GET /api/pertanyaan/kategori/3b
+```
+**Query Parameter:**
+- `nama_penyakit` *(string, required)*: Nama penyakit yang ingin dicari.
 
-#### Respon
-- **Sukses**
+**Deskripsi:**
+Mengembalikan daftar pertanyaan yang relevan dengan penyakit tertentu. Setiap pertanyaan akan memuat daftar tanaman yang terkait.
+
+**Contoh Respons:**
 ```json
 {
-  "message": "Berikut adalah pertanyaan yang berkaitan dengan penyakit 'Penyakit' dan kategori 'Kategori':",
+  "message": "Berikut adalah pertanyaan yang berkaitan dengan penyakit 'Penyakit X':",
   "pertanyaan": [
     {
-      "teks": "Pertanyaan 1",
-      "tanaman": "Tanaman 1"
+      "teks": "Apa tanaman yang cocok untuk Penyakit X?",
+      "tanaman": [
+        { "id": 1, "nama": "Tanaman A" },
+        { "id": 2, "nama": "Tanaman B" }
+      ]
     }
   ],
   "next_kategori": "Kategori 4b untuk mengetahui resep."
 }
 ```
-- **Error**: Jika data tidak ditemukan.
-```json
-{
-  "message": "Pertanyaan untuk penyakit 'Penyakit' dan kategori 'Kategori' tidak ditemukan."
-}
-```
 
 ---
 
-### 6. Kategori 4a: Detail Tanaman
-**URL**: `/api/pertanyaan/kategori/4a`  
-**Metode**: `GET`  
-**Parameter Query**:
-- `nama_tanaman` (wajib): Nama tanaman.
+### 5. Kategori 4b: Resep Berdasarkan Tanaman dan Penyakit
+**Endpoint:**
+```
+GET /api/pertanyaan/kategori/4b
+```
+**Query Parameter:**
+- `nama_tanaman` *(string, required)*: Nama tanaman yang dipilih.
+- `nama_penyakit` *(string, required)*: Nama penyakit yang dipilih.
 
-#### Respon
-- **Sukses**
+**Deskripsi:**
+Mengembalikan daftar resep yang terkait dengan kombinasi tanaman dan penyakit tertentu.
+
+**Contoh Respons:**
 ```json
 {
-  "message": "Berikut adalah detail untuk tanaman 'Tanaman':",
-  "detail": [
+  "message": "Berikut adalah daftar pertanyaan dan resep untuk penyakit 'Penyakit X' dengan tanaman 'Tanaman A':",
+  "pertanyaan4b": [
     {
-      "teks_pertanyaan": "Pertanyaan 1",
-      "penyakit": "Penyakit 1",
-      "kategori": "1"
+      "pertanyaan": "Bagaimana cara menggunakan Tanaman A untuk Penyakit X?",
+      "resep": "Rebus daun Tanaman A selama 10 menit, lalu minum."
     }
   ]
-}
-```
-- **Error**: Jika data tanaman tidak ditemukan.
-```json
-{
-  "message": "Detail untuk tanaman 'Tanaman' tidak ditemukan."
-}
-```
-
----
-
-### 7. Kategori 4b: Pertanyaan dan Resep
-**URL**: `/api/pertanyaan/kategori/4b`  
-**Metode**: `GET`  
-**Parameter Query**:
-- `nama_penyakit` (wajib): Nama penyakit.
-- `nama_tanaman` (wajib): Nama tanaman.
-- `kategori` (wajib): Nomor kategori.
-
-#### Respon
-- **Sukses**
-```json
-{
-  "message": "Berikut adalah pertanyaan dan resep untuk penyakit 'Penyakit' dengan tanaman 'Tanaman':",
-  "pertanyaan": ["Pertanyaan 1", "Pertanyaan 2"],
-  "resep": "Resep untuk penyakit dan tanaman ini."
-}
-```
-- **Error**: Jika data tidak ditemukan.
-```json
-{
-  "message": "Tidak ditemukan resep untuk penyakit 'Penyakit' dengan tanaman 'Tanaman'."
 }
 ```
 
 ---
 
 ## Menjalankan Server
-1. Clone repository ini.
+1. Pastikan MySQL sudah terpasang dan database `db_herbmate` sudah dikonfigurasi.
 2. Instal dependensi:
    ```bash
    npm install
    ```
-3. Perbarui konfigurasi database dengan kredensial MySQL Anda.
-4. Jalankan server:
+3. Jalankan server:
    ```bash
-   node app.js
+   node server.js
    ```
-5. Buka `http://localhost:3000` untuk memastikan server berjalan.
+4. Akses API melalui:
+   ```
+   http://localhost:3000
+   ```
 
 ---
 
-## Catatan
-- Pastikan skema database Anda sesuai dengan yang diharapkan.
-- Uji endpoint menggunakan alat seperti Postman atau cURL.
-```
+## Struktur Database (Contoh)
+### Tabel `tanaman`
+| id  | nama        | asal         | nama_latin | kandungan |
+|-----|-------------|--------------|------------|-----------|
+| 1   | Tanaman A   | Indonesia    | Plantus A  | Zat A     |
+| 2   | Tanaman B   | Malaysia     | Plantus B  | Zat B     |
+
+### Tabel `pertanyaan`
+| id  | teks_pertanyaan                          | nama_tanaman | penyakit    | kategori |
+|-----|------------------------------------------|--------------|-------------|----------|
+| 1   | Apa asal Tanaman A?                      | Tanaman A    | Penyakit X  | 3a       |
+| 2   | Apa tanaman yang cocok untuk Penyakit X? | Tanaman A,B  | Penyakit X  | 3b       |
+
+### Tabel `info_tambahan`
+| id  | nama_tanaman | penyakit    | resep                            |
+|-----|--------------|-------------|----------------------------------|
+| 1   | Tanaman A    | Penyakit X  | Rebus daun Tanaman A selama 10m. |
+
