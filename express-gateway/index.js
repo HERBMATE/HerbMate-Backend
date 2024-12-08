@@ -67,36 +67,44 @@ app.post('/predict', upload.single('file'), async (req, res) => {
 
 // Endpoint untuk mendapatkan semua data tanaman (nama dan path gambar)
 app.get('/tanaman', async (req, res) => {
+    const { query, order = 'ASC' } = req.query; // Ambil query parameters
+
     try {
         const connection = await mysql.createConnection(dbConfig);
 
         const [rows] = await connection.execute(
-            'SELECT nama, gambar FROM tanaman'
+            `SELECT DISTINCT t.nama, t.gambar, t.id 
+            FROM tanaman t
+            LEFT JOIN info_tambahan i ON t.nama = i.nama_tanaman
+            WHERE i.penyakit LIKE ?
+            ORDER BY t.nama ${order.toUpperCase() === 'DESC' ? 'DESC' : 'ASC'}`,
+            [`%${query || ''}%`] // Filter berdasarkan penyakit, jika query kosong akan mengembalikan semua data
         );
 
         await connection.end();
 
-        res.json(rows);
+        res.json({ tanamanResponse: rows });
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: error.message });
     }
 });
 
-// Endpoint untuk mencari data tanaman berdasarkan nama dan sorting by nama
+
 app.get('/tanaman/search', async (req, res) => {
-    const { nama, order = 'ASC' } = req.query; // Ambil query parameters
+    const { query, filter, order = 'ASC' } = req.query; // Ambil query parameters
 
     try {
         const connection = await mysql.createConnection(dbConfig);
 
-        // Query SQL dengan pencarian dan sorting
+        // Query SQL untuk mencari berdasarkan nama tanaman atau penyakit
         const [rows] = await connection.execute(
-            `SELECT nama, gambar 
-            FROM tanaman 
-            WHERE nama LIKE ? 
-            ORDER BY nama ${order.toUpperCase() === 'DESC' ? 'DESC' : 'ASC'}`,
-            [`%${nama || ''}%`] // Jika nama kosong, akan mengembalikan semua data
+            `SELECT DISTINCT t.nama, t.gambar 
+            FROM tanaman t
+            LEFT JOIN info_tambahan i ON t.nama = i.nama_tanaman
+            WHERE t.nama LIKE ? AND i.penyakit LIKE ?
+            ORDER BY t.nama ${order.toUpperCase() === 'DESC' ? 'DESC' : 'ASC'}`,
+            [`%${query || ''}%`, `%${filter || ''}%`] // Jika query kosong, akan mengembalikan semua data
         );
 
         await connection.end();
