@@ -8,7 +8,7 @@ const { GoogleGenerativeAI } = require("@google/generative-ai");
 const { LanguageServiceClient } = require('@google-cloud/language');
 const { TranslationServiceClient } = require('@google-cloud/translate');
 
-const apiKey = 'AIzaSyCIEyCcaidguGM5gTlgpmZhw_Qekner7Z0';  // Ganti dengan API Key dari proyek 'capstone-project-c242-ps193'
+const apiKey = 'masukkan api_key';  // Ganti dengan API Key dari proyek 'capstone-project-c242-ps193'
 
 
 const app = express();  
@@ -23,7 +23,7 @@ const dbConfig = {
 };
 
 // Konfigurasi Google Generative AI
-const genAI = new GoogleGenerativeAI("AIzaSyBnCxh84z3NQXH1z21kJvE7MtXZuUoX0-o");
+const genAI = new GoogleGenerativeAI("masukkan api_key");
 const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
 // Fungsi untuk menerjemahkan teks menggunakan API Key
