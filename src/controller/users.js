@@ -136,7 +136,8 @@ const updateUser = async(req, res) => {
             });
         }
         try {
-            const data = await usersMod.updateUser(body, email);
+            await usersMod.updateUser(body, email);
+            const [data] = await usersMod.login(email);
             const { password, ...dataUpdate } = data;
             const payload = { dataUpdate }
             const secret = process.env.JWT_SECRET;
