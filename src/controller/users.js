@@ -212,7 +212,7 @@ const forgotPassword = async(req, res) => {
         const secret = process.env.JWT_SECRET;
         const exp = 60 * 1;
         const token = jwt.sign(payload, secret, {expiresIn: exp});
-        const link = `http://localhost:8000/users/reset-password/${cekEmail.idUser}/${token}/${email}`;
+        const link = `https://herbmate-backend-7784081244.asia-southeast2.run.app/users/reset-password/${cekEmail.idUser}/${token}/${email}`;
         var transporter = nodemailer.createTransport({
             service: 'gmail',
             auth: {
