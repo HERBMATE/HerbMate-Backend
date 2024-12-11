@@ -27,6 +27,7 @@ router.get('/tanaman/getAllTanaman', accessValidations,tanamanController.getAllT
 router.get('/tanaman/getDetails/:nama_tanaman', accessValidations,tanamanController.getTanamanDetails);
 router.get('/tanaman/getResep/:penyakit', accessValidations,tanamanController.getResep);
 router.get('/tanaman/search/:tanaman', accessValidations, tanamanController.searchTanaman);
+router.get('/tanaman/getRekomendasi/:penyakit', accessValidations, tanamanController.getRekomendasi);
 
 // Chatbot Routes
 router.post('/chatbot', accessValidations, chatbotController.handleChatbotRequest);

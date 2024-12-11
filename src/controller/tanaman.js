@@ -112,9 +112,40 @@ const searchTanaman = async (req, res) => {
     }
 }
 
+const getRekomendasi = async(req, res) => {
+    const { penyakit } = req.params;
+
+    if(!penyakit) {
+        return res.status(400).json({
+            error: true,
+            message: 'Invalid Data',
+            data: null
+        })
+    }
+
+    try {
+        const [data] = await tanamanMod.rekomenTanaman(penyakit);
+        if (data && data.length > 0) {
+            res.json({
+                error: false,
+                message: 'Search Tanaman Successfully',
+                data: data
+            });
+        } else {
+            res.status(404).json({
+                error: true,
+                message: 'Tanaman not found'
+            });
+        }  
+    } catch (error) {
+        
+    }
+}
+
 module.exports = {
     getAllTanaman,
     getTanamanDetails,
     getResep,
-    searchTanaman
+    searchTanaman,
+    getRekomendasi
 }

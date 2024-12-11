@@ -38,10 +38,27 @@ const searchTanaman = (tanaman) => {
 
     return pool.execute(SQLQuery, [`%${tanaman || ''}%`]);
 }
+const rekomenTanaman = (penyakit) => {
+    const SQLQuery = 
+        `SELECT DISTINCT 
+            t.*, 
+            i.penyakit 
+        FROM 
+            tanaman t
+        JOIN 
+            info_tambahan i
+        ON 
+            t.nama = i.nama_tanaman
+        WHERE 
+            i.penyakit = ?`
+
+    return pool.execute(SQLQuery, [penyakit]);
+}
 
 module.exports = { 
     getAllTanaman, 
     getTanamanDetails, 
     getResep,
-    searchTanaman
+    searchTanaman,
+    rekomenTanaman
 }
