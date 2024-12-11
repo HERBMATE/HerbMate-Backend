@@ -38,7 +38,7 @@ const searchTanaman = (tanaman) => {
 
     return pool.execute(SQLQuery, [`%${tanaman || ''}%`]);
 }
-const rekomenTanaman = (penyakit) => {
+const rekomenTanaman = (penyakit, tanaman) => {
     const SQLQuery = 
         `SELECT DISTINCT 
             t.*, 
@@ -50,9 +50,9 @@ const rekomenTanaman = (penyakit) => {
         ON 
             t.nama = i.nama_tanaman
         WHERE 
-            i.penyakit = ?`
+            i.penyakit = ? AND t.nama != ?`
 
-    return pool.execute(SQLQuery, [penyakit]);
+    return pool.execute(SQLQuery, [penyakit, tanaman]);
 }
 
 module.exports = { 

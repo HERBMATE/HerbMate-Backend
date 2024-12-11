@@ -113,9 +113,9 @@ const searchTanaman = async (req, res) => {
 }
 
 const getRekomendasi = async(req, res) => {
-    const { penyakit } = req.params;
+    const { penyakit, tanaman } = req.params;
 
-    if(!penyakit) {
+    if(!penyakit || !tanaman) {
         return res.status(400).json({
             error: true,
             message: 'Invalid Data',
@@ -124,7 +124,7 @@ const getRekomendasi = async(req, res) => {
     }
 
     try {
-        const [data] = await tanamanMod.rekomenTanaman(penyakit);
+        const [data] = await tanamanMod.rekomenTanaman(penyakit, tanaman);
         if (data && data.length > 0) {
             res.json({
                 error: false,
