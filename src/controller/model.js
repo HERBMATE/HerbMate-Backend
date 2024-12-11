@@ -30,7 +30,7 @@ const handlePredict = async (req, res) => {
 
         form.append('file', fs.createReadStream(file.path));
 
-        const response = await axios.post('http://127.0.0.1:5000/predict', form, {
+        const response = await axios.post('https://flask-api-7784081244.asia-southeast2.run.app/predict', form, {
             headers: {
                 ...form.getHeaders(),
             },
