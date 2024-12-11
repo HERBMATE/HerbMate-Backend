@@ -272,6 +272,14 @@ const resetPassword = async(req, res) => {
 const reset_password = async(req, res) => {
     const { idUser, token, email } = req.params;
     const { password:pw, password2:pw2 } = req.body;
+
+    if(pw.length < 8){
+        return res.status(400).json({
+            error: true,
+            message: 'Invalid Data',
+            data: null
+        })
+    }
     
     const [cekEmail] = await usersMod.login(email);
     if(idUser != cekEmail.idUser){
