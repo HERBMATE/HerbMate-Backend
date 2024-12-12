@@ -211,7 +211,7 @@ const forgotPassword = async(req, res) => {
         const { password, ...userData } = cekEmail;
         const payload = {userData}
         const secret = process.env.JWT_SECRET;
-        const exp = 60 * 1;
+        const exp = 60 * 3;
         const token = jwt.sign(payload, secret, {expiresIn: exp});
         const link = `https://herbmate-backend-7784081244.asia-southeast2.run.app/users/reset-password/${cekEmail.idUser}/${token}/${email}`;
         var transporter = nodemailer.createTransport({
@@ -274,14 +274,6 @@ const reset_password = async(req, res) => {
     const { idUser, token, email } = req.params;
     const { password:pw, password2:pw2 } = req.body;
 
-    if(pw.length < 8){
-        return res.status(400).json({
-            error: true,
-            message: 'Invalid Data',
-            data: null
-        })
-    }
-
     const [cekEmail] = await usersMod.login(email);
     if(idUser != cekEmail.idUser){
         return res.status(400).json({
@@ -292,37 +284,26 @@ const reset_password = async(req, res) => {
     }
 
     if (!pw || !pw2) {
-        return res.status(400).json({
-            error: true,
-            message: 'Password or Confirm Password missing',
-            data: null
-        });
+        return res.render('output', {
+            alertMessage: 'Password or Confirm Password missing',
+        }); 
     }
 
-    if (pw !== pw) {
-        return res.status(400).json({
-            error: true,
-            message: 'Passwords do not match',
-            data: null
-        });
+    if (pw !== pw2) {
+        return res.render('output', {
+            alertMessage: 'Passwords do not match',
+        }); 
     }
 
     try {
         const hashedPW = await bcrypt.hash(pw, 10);
         await usersMod.resetPassword(hashedPW, email);
-        const { password, ...dataReset } = cekEmail;
-        return res.json({
-            error: false,
-            message: 'Update user successfully',
-            data: dataReset,
-            token: token
-        })
+        return res.render('output', {
+            alertMessage: 'Update Password Success',
+        });  
     } catch (error) {
-        console.log(error.message);
-        return res.status(500).json({
-            error: true,
-            message: 'Database Error',
-            serverMessage: error
+        return res.render('output', {
+            alertMessage: 'Update Password Failed', error,
         });
     }
 }
