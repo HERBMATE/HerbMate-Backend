@@ -17,13 +17,15 @@ router.post('/users/login', userController.login);
 router.post('/users/forgotPass', userController.forgotPassword);
 router.get('/users/reset-password/:idUser/:token/:email', userController.resetPassword);
 router.post('/users/reset-password/:idUser/:token/:email', userController.reset_password);
+router.post('/users/getGoogleAcc', userController.getGoogleAcc);
+
+// Bookmark Routes
 router.post('/users/addBookmark/:idUser/:id', accessValidations,userController.addBookmark);
 router.get('/users/getBookmark/:idUser', accessValidations,userController.getBookmark);
 router.delete('/users/delBookmark/:idBookmark', accessValidations,userController.delBookmark);
-router.post('/users/getGoogleAcc', userController.getGoogleAcc);
 
 // Tanaman Routes
-router.get('/tanaman/getAllTanaman', accessValidations,tanamanController.getAllTanaman);
+router.get('/tanaman/getAllTanaman/:idUser', accessValidations,tanamanController.getAllTanaman);
 router.get('/tanaman/getDetails/:nama_tanaman', accessValidations,tanamanController.getTanamanDetails);
 router.get('/tanaman/getResep/:penyakit', accessValidations,tanamanController.getResep);
 router.get('/tanaman/search/:tanaman', accessValidations, tanamanController.searchTanaman);

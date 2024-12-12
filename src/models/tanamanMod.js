@@ -1,9 +1,17 @@
 const pool = require('../config/database.js');
 
-const getAllTanaman = () => {
-    const SQLQuery = 'SELECT * FROM tanaman'
-    
-    return pool.execute(SQLQuery);
+const getAllTanaman = (idUser) => {
+    const SQLQuery = `
+    SELECT 
+        t.*, 
+        b.idBookmark
+    FROM 
+        tanaman t
+    LEFT JOIN 
+        bookmark b 
+        ON t.id = b.idTanaman AND b.idUser = ?`
+        
+    return pool.execute(SQLQuery, [idUser]);
 }
 
 const getTanamanDetails = (nama_tanaman) => {

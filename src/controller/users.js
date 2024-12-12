@@ -281,7 +281,7 @@ const reset_password = async(req, res) => {
             data: null
         })
     }
-    
+
     const [cekEmail] = await usersMod.login(email);
     if(idUser != cekEmail.idUser){
         return res.status(400).json({

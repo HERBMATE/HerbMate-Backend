@@ -1,13 +1,19 @@
 const tanamanMod = require('../models/tanamanMod');
 
 const getAllTanaman = async(req, res) => {
+    const { idUser } = req.params;
     try {
-        const [data] = await tanamanMod.getAllTanaman();
+        const [data] = await tanamanMod.getAllTanaman(idUser);
+        const getALLData = data.map(item => ({
+            ...item,
+            status: item.idBookmark !== null
+        }));
+        
         res.json({
             error: false,
             message: 'GET All Tanaman Successfully',
-            data: data
-        }); 
+            data: getALLData
+        });
     } catch (error) {
         res.status(500).json({
             error: true,
