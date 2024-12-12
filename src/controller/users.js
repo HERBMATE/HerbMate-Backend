@@ -322,13 +322,13 @@ const addBookmark = async(req, res) => {
     try {
         await usersMod.bookmark(idUser, id);
         
-        res.json({
+        return res.json({
             error: false,
             message: 'add Bookmark Successfully',
             data: null
         });
     } catch (error) {
-        res.status(500).json({
+        return res.status(500).json({
             error: true,
             message: 'Database Error',
             serverMessage: error
@@ -350,20 +350,20 @@ const getBookmark = async(req, res) => {
     try {
         const [ data ] = await usersMod.findBookmark(idUser);
         if (data && data.length > 0) {
-            res.json({
+            return res.json({
                 error: false,
                 message: 'GET Bookmark Successfully',
                 data: data
             });
         } else {
-            res.json({
+            return res.json({
                 error: false,
                 message: 'Bookmark Kosong',
                 data: null
             });
         }
     } catch (error) {
-        res.status(500).json({
+        return res.status(500).json({
             error: true,
             message: 'Database Error',
             serverMessage: error
@@ -385,13 +385,13 @@ const delBookmark = async(req, res) => {
     try {
         await usersMod.delBookmark(idBookmark);
         
-        res.json({
+        return res.json({
             error: false,
             message: 'Delete Bookmark Successfully',
             data: null
         });
     } catch (error) {
-        res.status(500).json({
+        return res.status(500).json({
             error: true,
             message: 'Database Error',
             serverMessage: error
