@@ -9,13 +9,13 @@ const getAllTanaman = async(req, res) => {
             status: item.idBookmark !== null
         }));
         
-        res.json({
+        return res.json({
             error: false,
             message: 'GET All Tanaman Successfully',
             data: getALLData
         });
     } catch (error) {
-        res.status(500).json({
+        return res.status(500).json({
             error: true,
             message: 'Database Error',
             serverMessage: error
@@ -37,19 +37,19 @@ const getTanamanDetails = async(req, res) => {
     try {
         const [data] = await tanamanMod.getTanamanDetails(nama_tanaman);
         if (data && data.length > 0) {
-            res.json({
+            return res.json({
                 error: false,
                 message: 'GET Tanaman Details Successfully',
                 data: data
             });
         } else {
-            res.status(404).json({
-                error: true,
+            return res.json({
+                error: false,
                 message: 'Tanaman not found'
             });
         } 
     } catch (error) {
-        res.status(500).json({
+        return res.status(500).json({
             error: true,
             message: 'Database Error',
             serverMessage: error
@@ -70,13 +70,20 @@ const getResep = async(req, res) => {
 
     try {
         const [data] = await tanamanMod.getResep(penyakit);
-        res.json({
-            error: false,
-            message: 'GET Resep Successfully',
-            data: data
-        }); 
+        if (data && data.length > 0) {
+            return res.json({
+                error: false,
+                message: 'GET Resep Successfully',
+                data: data
+            });
+        } else {
+            return res.json({
+                error: false,
+                message: 'Resep not found'
+            });
+        }  
     } catch (error) {
-        res.status(500).json({
+        return res.status(500).json({
             error: true,
             message: 'Database Error',
             serverMessage: error
@@ -98,19 +105,19 @@ const searchTanaman = async (req, res) => {
     try {
         const [data] = await tanamanMod.searchTanaman(tanaman);
         if (data && data.length > 0) {
-            res.json({
+            return res.json({
                 error: false,
                 message: 'Search Tanaman Successfully',
                 data: data
             });
         } else {
-            res.status(404).json({
-                error: true,
+            return res.json({
+                error: false,
                 message: 'Tanaman not found'
             });
         }  
     } catch (error) {
-        res.status(500).json({
+        return res.status(500).json({
             error: true,
             message: 'Database Error',
             serverMessage: error
@@ -132,14 +139,14 @@ const getRekomendasi = async(req, res) => {
     try {
         const [data] = await tanamanMod.rekomenTanaman(penyakit, tanaman);
         if (data && data.length > 0) {
-            res.json({
+            return res.json({
                 error: false,
                 message: 'Search Tanaman Successfully',
                 data: data
             });
         } else {
-            res.status(404).json({
-                error: true,
+            return res.json({
+                error: false,
                 message: 'Tanaman not found'
             });
         }  
