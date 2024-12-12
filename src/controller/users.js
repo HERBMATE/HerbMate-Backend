@@ -358,7 +358,7 @@ const getBookmark = async(req, res) => {
         } else {
             res.json({
                 error: false,
-                message: 'Add Bookmark',
+                message: 'Bookmark Kosong',
                 data: null
             });
         }

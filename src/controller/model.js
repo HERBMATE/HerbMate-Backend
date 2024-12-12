@@ -52,7 +52,17 @@ const handlePredict = async (req, res) => {
         const connection = await mysql.createConnection(dbConfig);
 
         const [rows] = await connection.execute(
-            'SELECT * FROM tanaman WHERE id = ?',
+            `SELECT 
+                t.*, 
+                i.penyakit 
+            FROM 
+                tanaman t
+            JOIN 
+                info_tambahan i
+            ON 
+                t.nama = i.nama_tanaman
+            WHERE 
+                t.id = ?`,
             [predictedClass]
         );
 
