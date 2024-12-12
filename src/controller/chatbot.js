@@ -1,5 +1,6 @@
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 const axios = require('axios');
+const { response } = require("express");
 const mysql = require('mysql2/promise');
 const dbConfig = {
     host: process.env.DB_HOST,
@@ -107,7 +108,7 @@ async function handleChatbotRequest(req, res) {
             error: true,
             status: 'bad request',
             statusCode: 400,
-            message: 'Prompt is required',
+            response: 'Prompt is required',
         });
     }
 
@@ -119,7 +120,7 @@ async function handleChatbotRequest(req, res) {
                 error: true,
                 status: 'bad request',
                 statusCode: 400,
-                message: 'Prompt must be related to herbal plants or medicine.',
+                response: 'Prompt must be related to herbal plants or medicine.',
             });
         }
 
@@ -138,7 +139,7 @@ async function handleChatbotRequest(req, res) {
             error: true,
             status: 'internal server error',
             statusCode: 500,
-            message: error.message,
+            response: error.message,
         });
     }
 }
