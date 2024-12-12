@@ -116,10 +116,10 @@ async function handleChatbotRequest(req, res) {
         const isValid = await isHerbalPromptNLP(prompt, 'id');
 
         if (!isValid) {
-            return res.status(400).json({
-                error: true,
+            return res.json({
+                error: false,
                 status: 'bad request',
-                statusCode: 400,
+                statusCode: 200,
                 response: 'Prompt must be related to herbal plants or medicine.',
             });
         }
