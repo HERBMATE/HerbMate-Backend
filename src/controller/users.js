@@ -356,9 +356,10 @@ const getBookmark = async(req, res) => {
                 data: data
             });
         } else {
-            res.status(404).json({
-                error: true,
-                message: 'Add Bookmark'
+            res.json({
+                error: false,
+                message: 'Add Bookmark',
+                data: null
             });
         }
     } catch (error) {
