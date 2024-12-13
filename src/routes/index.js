@@ -17,7 +17,6 @@ router.post('/users/login', userController.login);
 router.post('/users/forgotPass', userController.forgotPassword);
 router.get('/users/reset-password/:idUser/:token/:email', userController.resetPassword);
 router.post('/users/reset-password/:idUser/:token/:email', userController.reset_password);
-router.post('/users/getGoogleAcc', userController.getGoogleAcc);
 
 // Bookmark Routes
 router.post('/users/addBookmark/:idUser/:id', accessValidations,userController.addBookmark);

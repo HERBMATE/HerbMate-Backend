@@ -21,12 +21,6 @@ const createUser = async(body) => {
     return rows;
 }
 
-const loginGoogle = async(name, email) => {
-    const SQLQuery = `INSERT INTO users (name, email, password) VALUES (?, ?, ?)`;
-    const [ rows ] = await pool.execute(SQLQuery, [name, email, null]);
-    return rows;
-}
-
 const updateUser = async(body, email) => {
     const { name, password } = body;
     if(!password){
