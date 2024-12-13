@@ -416,6 +416,5 @@ module.exports = {
     reset_password,
     addBookmark,
     getBookmark,
-    delBookmark,
-    getGoogleAcc
+    delBookmark
 }

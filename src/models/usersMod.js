@@ -105,6 +105,5 @@ module.exports = {
     resetPassword,
     bookmark,
     findBookmark,
-    delBookmark,
-    loginGoogle
+    delBookmark
 }
